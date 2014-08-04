@@ -12,6 +12,7 @@ angular.module('directory', ['ionic', 'directory.services', 'directory.controlle
         // Learn more here: https://github.com/angular-ui/ui-router
         // Set up the various states which the app can be in.
         // Each state's controller can be found in controllers.js
+    	
         $stateProvider
 
             .state('employee-index', {
@@ -35,4 +36,6 @@ angular.module('directory', ['ionic', 'directory.services', 'directory.controlle
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/employees');
 
-    });
+    }).constant('DATA_URL', 'http://directory.bacanapps.com/api/v1/employees_json.json')   
+    .constant('DATA_UPDATE_URL', 'http://directory.bacanapps.com/api/v1/employees_json.json')   
+    ;

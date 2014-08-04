@@ -3,10 +3,12 @@ angular.module('directory.services', []).factory('EmployeeService', [
                                    '$http',
                                    '$log',
                                    '$rootScope',
+                                   'DATA_URL',
                                    function ($q,
                                   		 $http,
                                   		 $log,
-                                  		 $rootScope
+                                  		 $rootScope,
+                                  		 DATA_URL
                                    ) {
 
         /*var employees = [
@@ -42,7 +44,7 @@ angular.module('directory.services', []).factory('EmployeeService', [
                 var deferred = $q.defer();
                 if($rootScope.employees.length == 0) {
                 	$http({
-                 		url: 'http://directory.bacanapps.com/api/v1/employees_json.json',
+                 		url: DATA_URL,
                  		method: 'GET',
                  		headers: {
                  			'Content-Type': false,

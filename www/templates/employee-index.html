@@ -6,10 +6,14 @@
             <input id="searchKey" type="search" placeholder="Search" ng-model="searchKey" autocorrect="off" >
             <button class="button button-clear" ng-click="clearSearch()">X</button>
         </label>
-        <button class="button button-clear" ng-click="search()">Search</button>
+        <button class="button button-clear" ng-click="doRefresh()">Search</button>
     </div>
 
     <content has-header="true" has-subheader="true">
+    	 <refresher
+    pulling-text="Pull to refresh..."
+    on-refresh="doRefresh()">
+  </refresher>
         <list>
             <item ng-repeat="employee in employees" type="item-text-wrap" href="#/employee/{{employee.id}}">
                 <h3>{{employee.firstName}} {{employee.lastName}}</h3>
