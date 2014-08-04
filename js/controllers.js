@@ -1,6 +1,6 @@
 angular.module('directory.controllers', [])
 
-    .controller('EmployeeIndexCtrl', function ($scope, EmployeeService) {
+    .controller('EmployeeIndexCtrl',[ '$scope','EmployeeService','$http','DATA_URL',function ($scope, EmployeeService, $http, DATA_UPDATE_URL) {
 
         $scope.searchKey = "";
 
@@ -15,6 +15,18 @@ angular.module('directory.controllers', [])
             });
         }
 
+        
+        $scope.doRefresh = function() {
+            $http.get(DATA_UPDATE_URL)
+             .success(function(newItems) {
+               $scope.employees = newItems;
+             })
+             .finally(function() {
+               // Stop the ion-refresher from spinning
+               $scope.$broadcast('scroll.refreshComplete');
+             });
+          };
+          
         var findAllEmployees = function() {
             EmployeeService.findAll().then(function (employees) {
                 $scope.employees = employees;
@@ -23,7 +35,7 @@ angular.module('directory.controllers', [])
 
         findAllEmployees();
 
-    })
+    }])
 
     .controller('EmployeeDetailCtrl', function ($scope, $stateParams, EmployeeService) {
         EmployeeService.findById($stateParams.employeeId).then(function(employee) {

@@ -1,8 +1,17 @@
-angular.module('directory.services', [])
+angular.module('directory.services', []).factory('EmployeeService', [
+                                   '$q',
+                                   '$http',
+                                   '$log',
+                                   '$rootScope',
+                                   'DATA_URL',
+                                   function ($q,
+                                  		 $http,
+                                  		 $log,
+                                  		 $rootScope,
+                                  		 DATA_URL
+                                   ) {
 
-    .factory('EmployeeService', function($q) {
-
-        var employees = [
+        /*var employees = [
             {"id": 1, "firstName": "James", "lastName": "King", "managerId": 0, "managerName": "", "reports": 4, "title": "President and CEO", "department": "Corporate", "cellPhone": "617-000-0001", "officePhone": "781-000-0001", "email": "jking@fakemail.com", "city": "Boston, MA", "pic": "James_King.jpg", "twitterId": "@fakejking", "blog": "http://coenraets.org"},
             {"id": 2, "firstName": "Julie", "lastName": "Taylor", "managerId": 1, "managerName": "James King", "reports": 2, "title": "VP of Marketing", "department": "Marketing", "cellPhone": "617-000-0002", "officePhone": "781-000-0002", "email": "jtaylor@fakemail.com", "city": "Boston, MA", "pic": "Julie_Taylor.jpg", "twitterId": "@fakejtaylor", "blog": "http://coenraets.org"},
             {"id": 3, "firstName": "Eugene", "lastName": "Lee", "managerId": 1, "managerName": "James King", "reports": 0, "title": "CFO", "department": "Accounting", "cellPhone": "617-000-0003", "officePhone": "781-000-0003", "email": "elee@fakemail.com", "city": "Boston, MA", "pic": "Eugene_Lee.jpg", "twitterId": "@fakeelee", "blog": "http://coenraets.org"},
@@ -16,10 +25,10 @@ angular.module('directory.services', [])
             {"id": 11, "firstName": "Amy", "lastName": "Jones", "managerId": 5, "managerName": "Ray Moore", "reports": 0, "title": "Sales Representative", "department": "Sales", "cellPhone": "617-000-0011", "officePhone": "781-000-0011", "email": "ajones@fakemail.com", "city": "Boston, MA", "pic": "Amy_Jones.jpg", "twitterId": "@fakeajones", "blog": "http://coenraets.org"},
             {"id": 12, "firstName": "Steven", "lastName": "Wells", "managerId": 4, "managerName": "John Williams", "reports": 0, "title": "Software Architect", "department": "Engineering", "cellPhone": "617-000-0012", "officePhone": "781-000-0012", "email": "swells@fakemail.com", "city": "Boston, MA", "pic": "Steven_Wells.jpg", "twitterId": "@fakeswells", "blog": "http://coenraets.org"}
         ];
-
-
+*/
+        $rootScope.employees = [];
 //  			var employees = [
-// 			resource('http://api.flickr.com/services/feeds/photos_public.gne', 
+// 			resource('http://directory.bacanapps.com/api/v1/employees_json.json', 
 //      			{ format: 'json', jsoncallback: 'JSON_CALLBACK' }, 
 //       			{ 'load': { 'method': 'JSONP' } });
 // 			];
@@ -33,20 +42,39 @@ angular.module('directory.services', [])
         return {
             findAll: function() {
                 var deferred = $q.defer();
-                deferred.resolve(employees);
+                if($rootScope.employees.length == 0) {
+                	$http({
+                 		url: DATA_URL,
+                 		method: 'GET',
+                 		headers: {
+                 			'Content-Type': false,
+                 			transformRequest: function (data) {
+                 				return data;
+                 			}
+                 		}
+                 	}).success(function (jsonresponse, status, headers, config) {
+                 		$rootScope.employees = angular.fromJson(jsonresponse);   
+                 		deferred.resolve($rootScope.employees);
+                           
+                 	}).error(function (jsonresponse, status, headers, config) {
+                 		$rootScope.employees = angular.fromJson(jsonresponse);  
+                 		deferred.reject($rootScope.employees);;
+                 	});
+                	
+                }
                 return deferred.promise;
             },
 
             findById: function(employeeId) {
                 var deferred = $q.defer();
-                var employee = employees[employeeId - 1];
+                var employee = $rootScope.employees[employeeId - 1];
                 deferred.resolve(employee);
                 return deferred.promise;
             },
 
             findByName: function(searchKey) {
                 var deferred = $q.defer();
-                var results = employees.filter(function(element) {
+                var results = $rootScope.employees.filter(function(element) {
                     var fullName = element.firstName + " " + element.lastName;
                     return fullName.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
                 });
@@ -56,7 +84,7 @@ angular.module('directory.services', [])
 
             findByManager: function (managerId) {
                 var deferred = $q.defer(),
-                    results = employees.filter(function (element) {
+                    results = $rootScope.employees.filter(function (element) {
                         return parseInt(managerId) === element.managerId;
                     });
                 deferred.resolve(results);
@@ -65,4 +93,5 @@ angular.module('directory.services', [])
 
         }
 
-    });
+    }
+    ]);
